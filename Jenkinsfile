@@ -1,6 +1,6 @@
 pipeline {
   agent any
-//   stages {
+  stages {
 //     stage('Compile') {
 //       steps {
 //         // Compile the app and its dependencies
@@ -19,7 +19,7 @@ pipeline {
     stage('Build APK') {
       steps {
         // Finish building and packaging the APK
-        sh './gradlew assembleDebug'
+        sh 'gradlew assembleDebug'
 
         // Archive the APKs so that they can be downloaded from Jenkins
         archiveArtifacts '**/*.apk'
@@ -70,10 +70,10 @@ pipeline {
 //       }
 //     }
   }
-//   post {
-//     failure {
-//       // Notify developer team of the failure
-//       mail to: 'cuongpm5295@gmail.com', subject: 'Oops!', body: "Build ${env.BUILD_NUMBER} failed; ${env.BUILD_URL}"
-//     }
-//   }
+  post {
+    failure {
+      // Notify developer team of the failure
+      mail to: 'cuongpm5295@gmail.com', subject: 'Oops!', body: "Build ${env.BUILD_NUMBER} failed; ${env.BUILD_URL}"
+    }
+  }
 }
