@@ -1,5 +1,9 @@
 pipeline {
-  agent any
+//   agent any
+  agent {
+    // Run on a build agent where we have the Android SDK installed
+    label 'android'
+  }
   stages {
     stage('Compile') {
       steps {
@@ -7,15 +11,15 @@ pipeline {
         sh './gradlew compileDebugSources'
       }
     }
-//     stage('Unit test') {
-//       steps {
-//         // Compile and run the unit tests for the app and its dependencies
-//         sh './gradlew testDebugUnitTest'
-//
-//         // Analyse the test results and update the build result as appropriate
-//         junit '**/TEST-*.xml'
-//       }
-//     }
+    stage('Unit test') {
+      steps {
+        // Compile and run the unit tests for the app and its dependencies
+        sh './gradlew testDebugUnitTest'
+
+        // Analyse the test results and update the build result as appropriate
+        junit '**/TEST-*.xml'
+      }
+    }
     stage('Build APK') {
       steps {
         // Finish building and packaging the APK
