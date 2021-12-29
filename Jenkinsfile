@@ -1,9 +1,11 @@
 pipeline {
-  agent any
-    environment {
+  agent {
+          docker { image 'node:16.13.1-alpine' }
+  }
+   environment {
       APP_NAME = 'test'
-    }
-    options {
+   }
+   options {
       // Stop the build early in case of compile or test failures
       skipStagesAfterUnstable()
   }
