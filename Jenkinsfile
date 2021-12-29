@@ -1,3 +1,4 @@
+/*
 pipeline {
 //   agent any
   agent {
@@ -17,7 +18,8 @@ pipeline {
         sh './gradlew testDebugUnitTest'
 
         // Analyse the test results and update the build result as appropriate
-        junit '**/TEST-*.xml'
+        junit '**//*
+TEST-*.xml'
       }
     }
     stage('Build APK') {
@@ -26,14 +28,17 @@ pipeline {
         sh 'gradlew assembleDebug'
 
         // Archive the APKs so that they can be downloaded from Jenkins
-        archiveArtifacts '**/*.apk'
+        archiveArtifacts '** /*
+*/
+/*.apk'
       }
     }
 //     stage('Static analysis') {
 //       steps {
 //         // Run Lint and analyse the results
 //         sh './gradlew lintDebug'
-//         androidLintParser pattern: '**/lint-results-*.xml'
+//         androidLintParser pattern: '**//*
+lint-results-*.xml'
 //       }
 //       post {
 //         success {
@@ -61,10 +66,14 @@ pipeline {
 //         sh './gradlew assembleRelease'
 //
 //         // Archive the APKs so that they can be downloaded from Jenkins
-//         archiveArtifacts '**/*.apk'
+//         archiveArtifacts '** /*
+*/
+/*.apk'
 //
 //         // Upload the APK to Google Play
-//         androidApkUpload googleCredentialsId: 'Google Play', apkFilesPattern: '**/*-release.apk', trackName: 'beta'
+//         androidApkUpload googleCredentialsId: 'Google Play', apkFilesPattern: '** /*
+*/
+/*-release.apk', trackName: 'beta'
 //       }
 //       post {
 //         success {
@@ -80,4 +89,20 @@ pipeline {
       mail to: 'cuongpm5295@gmail.com', subject: 'Oops!', body: "Build ${env.BUILD_NUMBER} failed; ${env.BUILD_URL}"
     }
   }
+} */
+
+pipeline {
+    agent any
+    stages {
+        stage('build') {
+            steps {
+                android {
+                    sdkPackage "build-tools;29.0.2"
+                    sdkPackage "platforms;android-29"
+
+                    target 'testDebug'
+                }
+            }
+        }
+    }
 }
