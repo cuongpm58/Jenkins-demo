@@ -1,7 +1,8 @@
 pipeline {
   agent {
-          docker { image 'node:16.13.1-alpine' }
-  }
+//           docker { image 'node:16.13.1-alpine' }
+        label 'master'
+   }
    environment {
       APP_NAME = 'test'
    }
@@ -31,7 +32,7 @@ pipeline {
     stage('Unit test') {
       steps {
         // Compile and run the unit tests for the app and its dependencies
-        sh './gradlew testDebugUnitTest'
+        sh './gradlew test${BUILD_TYPE}UnitTest'
 
         // Analyse the test results and update the build result as appropriate
         junit '**/TEST-*.xml'
@@ -40,7 +41,7 @@ pipeline {
     stage('Build APK') {
       steps {
         // Finish building and packaging the APK
-        sh 'gradlew assembleDebug'
+        sh 'gradlew assemble${BUILD_TYPE}'
 
         // Archive the APKs so that they can be downloaded from Jenkins
         archiveArtifacts '**/*.apk'
@@ -91,10 +92,12 @@ pipeline {
 //       }
 //     }
   }
-  post {
-    failure {
-      // Notify developer team of the failure
-      mail to: 'cuongpm5295@gmail.com', subject: 'Oops!', body: "Build ${env.BUILD_NUMBER} failed; ${env.BUILD_URL}"
-    }
-  }
+//   post {
+//     failure {
+//       // Notify developer team of the failure
+//       mail to: 'cuongpm5295@gmail.com', subject: 'Oops!', body: "Build ${env.BUILD_NUMBER} failed; ${env.BUILD_URL}"
+//     }
+//   }
+
+
 }
