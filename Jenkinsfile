@@ -1,15 +1,29 @@
-/*
 pipeline {
-//   agent any
-  agent {
-    // Run on a build agent where we have the Android SDK installed
-    label 'android'
+  agent any
+    environment {
+      APP_NAME = 'test'
+    }
+    options {
+      // Stop the build early in case of compile or test failures
+      skipStagesAfterUnstable()
   }
   stages {
+    stage('Detect build type') {
+      steps {
+        script {
+          if (env.BRANCH_NAME == 'develop' || env.CHANGE_TARGET == 'develop') {
+            env.BUILD_TYPE = 'debug'
+          } else if (env.BRANCH_NAME == 'master' || env.CHANGE_TARGET == 'master') {
+            env.BUILD_TYPE = 'release'
+          }
+        }
+      }
+    }
+
     stage('Compile') {
       steps {
         // Compile the app and its dependencies
-        sh './gradlew compileDebugSources'
+        sh './gradlew compile${BUILD_TYPE}Sources'
       }
     }
     stage('Unit test') {
@@ -18,8 +32,7 @@ pipeline {
         sh './gradlew testDebugUnitTest'
 
         // Analyse the test results and update the build result as appropriate
-        junit '**//*
-TEST-*.xml'
+        junit '**/TEST-*.xml'
       }
     }
     stage('Build APK') {
@@ -28,17 +41,14 @@ TEST-*.xml'
         sh 'gradlew assembleDebug'
 
         // Archive the APKs so that they can be downloaded from Jenkins
-        archiveArtifacts '** /*
-*/
-/*.apk'
+        archiveArtifacts '**/*.apk'
       }
     }
 //     stage('Static analysis') {
 //       steps {
 //         // Run Lint and analyse the results
 //         sh './gradlew lintDebug'
-//         androidLintParser pattern: '**//*
-lint-results-*.xml'
+//         androidLintParser pattern: '**/lint-results-*.xml'
 //       }
 //       post {
 //         success {
@@ -66,14 +76,10 @@ lint-results-*.xml'
 //         sh './gradlew assembleRelease'
 //
 //         // Archive the APKs so that they can be downloaded from Jenkins
-//         archiveArtifacts '** /*
-*/
-/*.apk'
+//         archiveArtifacts '**/*.apk'
 //
 //         // Upload the APK to Google Play
-//         androidApkUpload googleCredentialsId: 'Google Play', apkFilesPattern: '** /*
-*/
-/*-release.apk', trackName: 'beta'
+//         androidApkUpload googleCredentialsId: 'Google Play', apkFilesPattern: '**/*-release.apk', trackName: 'beta'
 //       }
 //       post {
 //         success {
@@ -89,20 +95,4 @@ lint-results-*.xml'
       mail to: 'cuongpm5295@gmail.com', subject: 'Oops!', body: "Build ${env.BUILD_NUMBER} failed; ${env.BUILD_URL}"
     }
   }
-} */
-
-pipeline {
-    agent any
-    stages {
-        stage('build') {
-            steps {
-                android {
-                    sdkPackage "build-tools;29.0.2"
-                    sdkPackage "platforms;android-29"
-
-                    target 'testDebug'
-                }
-            }
-        }
-    }
 }
