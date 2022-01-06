@@ -1,5 +1,8 @@
 pipeline {
-  agent any
+  agent {
+//           docker { image 'node:16.13.1-alpine' }
+        node { label 'android' }
+  }
    environment {
       APP_NAME = 'test'
    }
@@ -23,7 +26,7 @@ pipeline {
     stage('Compile') {
       steps {
         // Compile the app and its dependencies
-        sh './gradlew compile${BUILD_TYPE}Sources'
+        sh 'gradlew compile${BUILD_TYPE}Sources'
       }
     }
     stage('Unit test') {
