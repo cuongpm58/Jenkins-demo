@@ -23,15 +23,28 @@ pipeline {
       }
     }
 
+    stage('Clean') {
+          steps {
+            // Compile the app and its dependencies
+            echo 'Clean project'
+            sh 'chmod +x gradlew'
+            sh './gradlew clean'
+          }
+        }
+
     stage('Compile') {
       steps {
         // Compile the app and its dependencies
-        sh 'gradlew compile${BUILD_TYPE}Sources'
+        echo 'Compile project'
+        sh 'chmod +x gradlew'
+        sh './gradlew compile${BUILD_TYPE}Sources'
       }
     }
     stage('Unit test') {
       steps {
         // Compile and run the unit tests for the app and its dependencies
+        echo 'Unit test'
+        sh 'chmod +x gradlew'
         sh './gradlew test${BUILD_TYPE}UnitTest'
 
         // Analyse the test results and update the build result as appropriate
@@ -41,6 +54,8 @@ pipeline {
     stage('Build APK') {
       steps {
         // Finish building and packaging the APK
+        echo 'Build APK'
+        sh 'chmod +x gradlew'
         sh 'gradlew assemble${BUILD_TYPE}'
 
         // Archive the APKs so that they can be downloaded from Jenkins
