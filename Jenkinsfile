@@ -1,8 +1,5 @@
 pipeline {
-  agent {
-//           docker { image 'node:16.13.1-alpine' }
-        label 'master'
-   }
+  agent any
    environment {
       APP_NAME = 'test'
    }
